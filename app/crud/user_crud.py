@@ -8,7 +8,7 @@ from fastapi import HTTPException, Depends, status
 from sqlalchemy.orm.session import Session
 from jose import jwt, JWTError
 from app.schemas import user_schema as schemas
-from app.models import user_model as models
+from app.models import user_model as models, post_model
 from app.core.auth import oauth2_scheme
 from app.core.security import get_password_hash
 
@@ -64,4 +64,4 @@ async def get_current_active_user(current_user: schemas.User = Depends(get_curre
 
 # crud to get post by user id
 def get_posts_by_user_id(db: Session, user_id: int):
-    return db.query(post_models.Post).filter(post_models.Post.author_id == user_id).all()
+    return db.query(post_model.Post).filter(post_model.Post.author_id == user_id).all()

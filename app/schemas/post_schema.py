@@ -1,5 +1,5 @@
 from typing import List, Union
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PostBase(BaseModel):
@@ -8,7 +8,9 @@ class PostBase(BaseModel):
 
 
 class PostCreate(PostBase):
-    pass
+    title: str = Field(example="My first post")
+    content: Union[str, None] = Field(
+        example="This is the content of my first post")
 
 
 class Post(PostBase):

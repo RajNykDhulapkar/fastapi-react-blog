@@ -7,9 +7,9 @@ def get_posts(db: Session, skip: int = 0, limit: int = 100):
     return db.query(post_model.Post).offset(skip).limit(limit).all()
 
 
-def create_user_post(db: Session, post: post_schema.PostCreate, user_id: int):
+def create_post(db: Session, data: post_schema.PostCreate, user_id: int):
     db_post = post_model.Post(
-        **post.dict(), author_id=user_id)
+        **data.dict(), author_id=user_id)
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
