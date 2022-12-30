@@ -15,7 +15,7 @@ from app.crud import user_crud
 router = APIRouter()
 
 
-@router.post("/login",  response_model=user_schema.Token)
+@router.post("/token",  response_model=user_schema.Token)
 def login_access_token(
     db: Session = Depends(deps.get_db),
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -40,7 +40,8 @@ def login_access_token(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token = create_access_token(data={"sub": user.email})
+    print(user)
+    access_token = create_access_token(data={"sub": user.id})
     return {"access_token": access_token, "token_type": "Bearer"}
 
 
