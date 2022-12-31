@@ -10,5 +10,4 @@ class User(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
 
-    posts = relationship("Post", back_populates="author",
-                         uselist=True, cascade="all, delete-orphan")
+    posts = relationship("Post", back_populates="author")

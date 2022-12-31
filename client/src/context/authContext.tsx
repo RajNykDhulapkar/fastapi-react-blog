@@ -3,8 +3,8 @@ import { createContext, useEffect, useState } from "react";
 
 export interface IAuthenticationContext {
     currentUser: Object | null;
-    logIn: () => void;
-    logOut: () => void;
+    login: (inputs: any) => Promise<void>;
+    logout: () => Promise<void>;
 }
 
 export const AuthContext = createContext<IAuthenticationContext | null>(null);
@@ -15,14 +15,28 @@ export const AuthContextProvider = ({ children }) => {
     );
 
     const login = async (inputs: any) => {
-        const res = await axios.post("/api/auth/login", inputs);
+        const params = new URLSearchParams();
+        params.append("username", inputs.email);
+        params.append("password", inputs.password);
+        const res = await axios.post(import.meta.env.VITE_API_URL + "/api/auth/token", params, {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        });
+        localStorage.setItem("access_token", res.data.access_token);
+        const { data } = await axios.get(import.meta.env.VITE_API_URL + "/api/auth/me", {
+            headers: {
+                Authorization: `Bearer ${res.data.access_token}`,
+            },
+        });
         setCurrentUser((prevState) => ({
             ...prevState,
+            ...data,
         }));
     };
 
-    const logout = async (inputs: any) => {
-        await axios.post("/api/auth/logout");
+    const logout = async () => {
+        // await axios.post("/api/ping");
         setCurrentUser(null);
     };
 

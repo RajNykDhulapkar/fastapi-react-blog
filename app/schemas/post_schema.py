@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 class PostBase(BaseModel):
     title: str
     content: Union[str, None] = None
+    image_url: Union[str, None] = None
 
 
 class PostCreate(PostBase):

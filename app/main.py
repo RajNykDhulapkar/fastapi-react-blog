@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from fastapi import FastAPI, APIRouter, Query, HTTPException, Request, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,16 +8,21 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import datetime, timedelta
+from sqlalchemy import event
 
+from app.models import user_model, post_model
 from sqlalchemy.orm import Session
 from app import crud, database, schemas
 from app.database import SessionLocal, engine
 from app.database.base_class import Base as DB_Base
 from app.api.routes import api_router
 from app.core.config import settings
+from app.database.seed import initialize_table
 
-DB_Base.metadata.create_all(bind=engine)
 
+# I set up this event before table creation
+event.listen(user_model.User.__table__, 'after_create', initialize_table)
+event.listen(post_model.Post.__table__, 'after_create', initialize_table)
 
 BASE_PATH = Path(__file__).resolve().parent
 
@@ -25,7 +31,15 @@ app = FastAPI(
 )
 
 
+@app.on_event("startup")
+def configure():
+    DB_Base.metadata.create_all(bind=engine)
+    print("Database created")
+
+
 # dependency
+
+
 def get_db():
     db = SessionLocal()
     try:

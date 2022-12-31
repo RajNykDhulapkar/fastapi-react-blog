@@ -34,6 +34,7 @@ def login_access_token(
         HTTPException: _description_
     """
     user = authenticate_user(db, form_data.username, form_data.password)
+    print(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -81,5 +82,4 @@ def register_user(
             status_code=400,
             detail="The user with this email already exists in the system.",
         )
-    print(user)
     return user_crud.create_user(db=db, obj_in=user)
